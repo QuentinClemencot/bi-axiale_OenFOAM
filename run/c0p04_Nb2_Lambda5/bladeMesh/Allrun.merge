@@ -1,0 +1,20 @@
+
+
+#!/bin/sh
+cd ${0%/*} || exit 1                        # Run from this directory
+. $WM_PROJECT_DIR/bin/tools/RunFunctions    # Tutorial run functions
+
+
+# merge overset blade together :
+cp -rf  ../blade1Mesh/constant/polyMesh/ ./constant/
+
+
+
+python /fsnet/project/nrj/2019/19TRIBINE/simulation/reference_cases/bi_axial_turbine/py/func/mergeMesh.py . ../blade2Mesh/
+
+
+python /fsnet/project/nrj/2019/19TRIBINE/simulation/reference_cases/bi_axial_turbine/py/func/mergeMesh.py . ../bladeAndBackground/
+
+
+
+#------------------------------------------------------------------------------

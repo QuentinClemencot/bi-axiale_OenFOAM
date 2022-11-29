@@ -1,0 +1,112 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2112                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    cellDisplacement
+    {
+        solver          PCG;
+        preconditioner  DIC;
+
+        tolerance       1e-06;
+        relTol          0;
+	minIter		3;
+        maxIter         100;
+    }
+
+
+    p
+    {
+        solver          PBiCGStab;
+        tolerance       1e-05;
+        relTol          0;
+	preconditioner	DILU;
+	minIter		1;
+	maxIter		1000;
+    }
+
+    pFinal
+    {
+        $p;
+        relTol          0;
+    }
+
+
+
+
+    "(U|k|omega)"
+    {
+	solver		smoothSolver;
+	smoother	symGaussSeidel;
+        tolerance       1e-6;
+        relTol          0;
+	minIter		1;
+	maxIter		1000;
+    }
+
+    "(U|k|omega)Final"
+    {
+        $U;
+        relTol          0;
+    }
+
+}
+
+
+PIMPLE
+{
+ 
+    turbOnFinalIterOnly  false;
+    nNonOrthogonalCorrectors 1;
+    nCorrectors          2;
+    nOuterCorrectors    50;
+    consistent    yes;
+    oversetAdjustPhi    true;
+
+ 
+    residualControl
+    {
+        U
+        {
+                tolerance  1e-6;
+                relTol      0;
+        }
+        p
+        {
+                tolerance  1e-6;
+                relTol      0;
+        }
+     }
+}
+
+relaxationFactors
+{
+    fields
+    {
+	p		0.3;
+	pFinal		1;
+    }
+    equations
+    {
+        "(U|k|omega)"		0.7;
+	"(U|k|omega)Final"	1;
+    }
+
+}
+
+
+// ************************************************************************* //

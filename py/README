@@ -1,0 +1,19 @@
+Purpose of this directory : 
+
+	This folder contains all python script used for pre and postprocessing
+	of vertical turbine (2 axis darrieus turbine).
+
+Description of folder :
+
+	post:
+		python scripts for the postprocessing of cases 
+			(residuals/force coeff visulisation, comparison of cases..)
+
+	pre:
+		python script for preprocessing
+
+
+	func:
+		python script where functions used in post and preprocessing are defined
+
+

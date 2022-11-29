@@ -1,0 +1,45 @@
+#!/bin/sh
+cd ${0%/*} || exit 1                        # Run from this directory
+. $WM_PROJECT_DIR/bin/tools/RunFunctions    # Tutorial run functions
+
+
+template_path="/fsnet/project/nrj/2019/19TRIBINE/simulation/reference_cases/bi_axial_turbine/templates"
+
+
+# Create background mesh with unifrom cell size
+runApplication reconstructParMesh -latestTime
+mv ./log.reconstructParMesh  ./log.reconstructParMesh1
+
+# The created mesh contains several cells in the width.
+# However, there must be only one cell in the width of the mesh to simulate a 2D case. 
+#The next step consists in recreating a 2D mesh (in the OpenFOAM sense) by extruding the front face (of 'empty' type). 
+${template_path}/template_extrudeMeshDict.py
+runApplication extrudeMesh  
+mv ./log.extrudeMesh  ./log.extrudeMesh1
+
+rm -rf ./1
+
+
+#Renumbers the cell list in order to reduce the bandwidth
+runApplication renumberMesh -overwrite
+mv ./log.renumberMesh  ./log.renumberMesh1
+
+#Delete useless and big folders processor*
+rm -rf ./processor*
+
+
+mv ./system/snappyHexMeshDict ./system/snappyHexMeshDict0
+mv ./system/snappyHexMeshDict1 ./system/snappyHexMeshDict
+
+
+runApplication snappyHexMesh 
+
+runApplication extrudeMesh  
+
+rm -rf ./1
+
+#fusion and rename front and Back patches as 'frontAndBack' 
+runApplication createPatch -overwrite
+
+#Renumbers the cell list in order to reduce the bandwidth
+runApplication renumberMesh -overwrite

@@ -1,0 +1,66 @@
+
+#!/bin/sh
+cd ${0%/*} || exit 1                        # Run from this directory
+. $WM_PROJECT_DIR/bin/tools/RunFunctions    # Tutorial run functions
+
+# Remove old log.* files 
+rm -f log.* 
+rm -rf constant/polyMesh
+
+# Generate mesh from fluent 3d mesh 
+runApplication fluentMeshToFoam -2D 0.01 NACA0012_ovoide_c1m_cellMax0p03m.msh
+
+# Make front and back type empty
+cp ./system/createPatchDict0 ./system/createPatchDict
+runApplication createPatch -overwrite
+mv log.createPatch log.createPatch0
+
+# transform the mesh to be at corect initiale angle and correct chord lenght (default c=1m)
+
+# This translation places point A at the origin of the coordinate system
+runApplication transformPoints -translate "(-0.125 0 0)"  
+mv log.transformPoints log.transformPoints0translate
+
+# A rotation of pi is necessary to have theta = 0rad.
+# To avoid bugs, we perform two successive rotations of pi/2
+runApplication transformPoints -rotate "((1 0 0)(0 1 0))"
+mv log.transformPoints log.transformPoints0rotate1
+runApplication transformPoints -rotate "((1 0 0)(0 1 0))"
+mv log.transformPoints log.transformPoints0rotate2
+
+runApplication transformPoints -scale "(0.04 0.04 1)"
+mv log.transformPoints log.transformPoints0scale
+
+
+# Create blade1 overset mesh:
+rm -rf ../blade1Mesh
+mkdir ../blade1Mesh
+cp -r constant ../blade1Mesh/
+cp -r system ../blade1Mesh/
+
+runApplication transformPoints -case ../blade1Mesh/ -rotate "((1 0 0)(-0.15 -0.9886859967 0))" 
+mv log.transformPoints log.transformPointsRotateblade1
+
+runApplication transformPoints -case ../blade1Mesh/ -translate "(-0.1 -0.0 0)" 
+mv log.transformPoints log.transformPointsTranslateblade1
+
+cp ./system/createPatchDictblade1 ../blade1Mesh/system/createPatchDict
+runApplication createPatch -case ../blade1Mesh -overwrite
+mv log.createPatch	log.createPatchblade1
+
+
+# Create blade2 overset mesh:
+rm -rf ../blade2Mesh
+mkdir ../blade2Mesh
+cp -r constant ../blade2Mesh/
+cp -r system ../blade2Mesh/
+
+runApplication transformPoints -case ../blade2Mesh/ -rotate "((1 0 0)(0.15 0.9886859967 0))" 
+mv log.transformPoints log.transformPointsRotateblade2
+
+runApplication transformPoints -case ../blade2Mesh/ -translate "(0.1 -0.4 0)" 
+mv log.transformPoints log.transformPointsTranslateblade2
+
+cp ./system/createPatchDictblade2 ../blade2Mesh/system/createPatchDict
+runApplication createPatch -case ../blade2Mesh -overwrite
+mv log.createPatch	log.createPatchblade2

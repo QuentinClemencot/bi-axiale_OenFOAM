@@ -1,0 +1,16 @@
+#!/bin/bash 
+
+
+#OAR -n biaxial___NBBLADES_____CHORD_____RADIUS_____TRANSLATION_____LAMBDA___start
+#OAR -l /nodes=1/core=__NBCORES__,walltime=10:00:00
+
+cp ./system/controlDict_start ./system/controlDict
+cp ./system/fvSolution_start ./system/fvSolution
+
+source /etc/profile
+module load openfoam/2112plus
+source /opt/openfoam/2112plus/OpenFOAM-v2112/etc/bashrc
+
+# Lancement 
+mpirun -np __NBCORES__ overPimpleDyMFoam -parallel > log.start
+

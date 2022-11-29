@@ -1,0 +1,72 @@
+#!/bin/bash
+#
+#OAR -t idempotent
+#OAR --checkpoint 2400
+#OAR -n biaxial___NBBLADES_____CHORD_____RADIUS_____TRANSLATION_____LAMBDA___long_job
+#OAR -l /nodes=1/core=__NBCORES__,walltime=24:00:00
+
+cp ./system/controlDict_regular ./system/controlDict
+cp ./system/fvSolution_regular ./system/fvSolution
+
+source /etc/profile
+
+# chargement des modules
+module load openfoam/2112plus
+source /opt/openfoam/2112plus/OpenFOAM-v2112/etc/bashrc
+
+# openFoam reset endtime simulation
+sed -i -e 's/ writeNow;/ endTime;/g' system/controlDict
+
+
+# Trap signal USR2 and send OAR checkpoint to our children
+# openFoam set endtime simulation to now and write timestep
+trap "sed -i -e 's/ endTime;/ writeNow;/g' system/controlDict" USR2
+
+
+# Idempotent barrier protection
+MAX_OAR_LOOP=10
+
+
+
+
+# Read idempotent barrier counter
+if [ -e oar-loop-barrier.log ]
+then
+   oar_loop=$(grep '^OAR_LOOP_COUNTER='    oar-loop-barrier.log | cut -d '=' -f 2)
+   oar_time=$(grep '^OAR_SIMULATION_TIME=' oar-loop-barrier.log | cut -d '=' -f 2)
+else
+   oar_loop=0
+   oar_time=first
+fi
+
+# Launch the code and take back the hand (asynchrone) change to openFoam
+#
+mpirun -np __NBCORES__ overPimpleDyMFoam -parallel > log &
+
+# Wait for the end of the code and can receive signal
+while [ $(jobs -p | wc -l) -gt 0 ]
+do
+   wait
+done
+
+
+# Epilogue
+# Return value in $?
+# ...
+
+# Test idempotent barrier counter
+if [ ${oar_loop} -gt ${MAX_OAR_LOOP} ]
+then
+   echo "Too many job resubmit, quit idempotent oar loop"
+   exit 1
+else
+  # Update idempotent barrier counter
+  oar_loop=$(( ${oar_loop} + 1 ))
+  echo "OAR_LOOP_COUNTER=${oar_loop}"     >  oar-loop-barrier.log
+  echo "OAR_SIMULATION_TIME=${oar_time2}" >> oar-loop-barrier.log 
+
+  # exit 99 -> resubmit the job
+  exit 99
+   
+fi
+

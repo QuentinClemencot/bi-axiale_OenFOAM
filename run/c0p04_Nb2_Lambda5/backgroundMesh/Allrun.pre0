@@ -1,0 +1,32 @@
+#!/bin/sh
+cd ${0%/*} || exit 1                        # Run from this directory
+. $WM_PROJECT_DIR/bin/tools/RunFunctions    # Tutorial run functions
+
+cp ../bladeAndBackground/simulationProperties.py .
+
+template_path="/fsnet/project/nrj/2019/19TRIBINE/simulation/reference_cases/bi_axial_turbine/templates"
+
+#generate the ./system/blockMeshDict.py files with information readen in ./simulationProperties.py
+${template_path}/template_blockMeshDict.py
+
+#generate the ./system/snappyHexMeshDict files with information readen in ./simulationProperties.py
+${template_path}/template_snappyHexMeshDict.py
+
+
+# Create background mesh with unifrom cell size
+runApplication blockMesh
+
+
+runApplication decomposePar
+mv ./log.decomposePar  ./log.decomposePar0
+
+
+
+# now create a chain of 2 job, first is classic, the second is long job
+# first job
+job_id=$(oarsub -S ./snappyHexMesh_parallel.oar | grep '^OAR_JOB_ID=' | cut -f 2 -d '=')
+
+# second job
+oarsub -S -a ${job_id}  ./Allrun.pre1
+
+

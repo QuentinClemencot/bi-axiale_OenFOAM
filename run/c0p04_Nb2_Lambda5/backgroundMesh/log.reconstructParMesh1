@@ -1,0 +1,136 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2112                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _14aeaf8dab-20211220 OPENFOAM=2112 version=v2112
+Arch   : "LSB;label=32;scalar=64"
+Exec   : reconstructParMesh -latestTime
+Date   : Aug 02 2022
+Time   : 15:44:32
+Host   : cl7n013
+PID    : 523664
+I/O    : uncollated
+Case   : /fsnet/project/nrj/2019/19TRIBINE/simulation/reference_cases/bi_axial_turbine/run/c0p04_Nb2_Lambda5/backgroundMesh
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Merge individual processor meshes back into one master mesh.
+Use if the original master mesh has been deleted or the processor meshes
+have been modified (topology change).
+This tool will write the resulting mesh to a new time step and construct
+xxxxProcAddressing files in the processor meshes so reconstructPar can be
+used to regenerate the fields on the master mesh.
+
+Not well tested & use at your own risk!
+
+Merge assuming correct, fully matched procBoundaries.
+
+Found 10 processor directories
+    Reading database "backgroundMesh/processor0"
+    Reading database "backgroundMesh/processor1"
+    Reading database "backgroundMesh/processor2"
+    Reading database "backgroundMesh/processor3"
+    Reading database "backgroundMesh/processor4"
+    Reading database "backgroundMesh/processor5"
+    Reading database "backgroundMesh/processor6"
+    Reading database "backgroundMesh/processor7"
+    Reading database "backgroundMesh/processor8"
+    Reading database "backgroundMesh/processor9"
+
+Time = 1
+
+
+Writing merged mesh to "1/polyMesh"
+
+Reconstructing addressing from processor meshes to the newly reconstructed mesh
+
+Processor 0
+Read processor mesh: "backgroundMesh/processor0"
+Writing addressing : "backgroundMesh/processor0/1/polyMesh"
+    pointProcAddressing
+    faceProcAddressing
+    cellProcAddressing
+    boundaryProcAddressing
+
+Processor 1
+Read processor mesh: "backgroundMesh/processor1"
+Writing addressing : "backgroundMesh/processor1/1/polyMesh"
+    pointProcAddressing
+    faceProcAddressing
+    cellProcAddressing
+    boundaryProcAddressing
+
+Processor 2
+Read processor mesh: "backgroundMesh/processor2"
+Writing addressing : "backgroundMesh/processor2/1/polyMesh"
+    pointProcAddressing
+    faceProcAddressing
+    cellProcAddressing
+    boundaryProcAddressing
+
+Processor 3
+Read processor mesh: "backgroundMesh/processor3"
+Writing addressing : "backgroundMesh/processor3/1/polyMesh"
+    pointProcAddressing
+    faceProcAddressing
+    cellProcAddressing
+    boundaryProcAddressing
+
+Processor 4
+Read processor mesh: "backgroundMesh/processor4"
+Writing addressing : "backgroundMesh/processor4/1/polyMesh"
+    pointProcAddressing
+    faceProcAddressing
+    cellProcAddressing
+    boundaryProcAddressing
+
+Processor 5
+Read processor mesh: "backgroundMesh/processor5"
+Writing addressing : "backgroundMesh/processor5/1/polyMesh"
+    pointProcAddressing
+    faceProcAddressing
+    cellProcAddressing
+    boundaryProcAddressing
+
+Processor 6
+Read processor mesh: "backgroundMesh/processor6"
+Writing addressing : "backgroundMesh/processor6/1/polyMesh"
+    pointProcAddressing
+    faceProcAddressing
+    cellProcAddressing
+    boundaryProcAddressing
+
+Processor 7
+Read processor mesh: "backgroundMesh/processor7"
+Writing addressing : "backgroundMesh/processor7/1/polyMesh"
+    pointProcAddressing
+    faceProcAddressing
+    cellProcAddressing
+    boundaryProcAddressing
+
+Processor 8
+Read processor mesh: "backgroundMesh/processor8"
+Writing addressing : "backgroundMesh/processor8/1/polyMesh"
+    pointProcAddressing
+    faceProcAddressing
+    cellProcAddressing
+    boundaryProcAddressing
+
+Processor 9
+Read processor mesh: "backgroundMesh/processor9"
+Writing addressing : "backgroundMesh/processor9/1/polyMesh"
+    pointProcAddressing
+    faceProcAddressing
+    cellProcAddressing
+    boundaryProcAddressing
+
+End
+

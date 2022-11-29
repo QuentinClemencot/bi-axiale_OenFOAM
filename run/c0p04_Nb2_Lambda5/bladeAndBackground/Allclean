@@ -1,0 +1,41 @@
+#!/bin/sh
+cd ${0%/*} || exit 1                        # Run from this directory
+. $WM_PROJECT_DIR/bin/tools/CleanFunctions  # Tutorial clean functions
+
+cleanCase0
+../bladeMesh/Allclean
+
+rm -f  ./OAR.*
+rm -f  ./tmp_*
+rm -f  ./oar-loop-barrier.log
+rm -fr ./figure
+rm -fr ./constant/polyMesh
+rm -fr ./py_postprocess_data
+
+rm -f ./0_orig/U
+rm -f ./0_orig/k
+rm -f ./0_orig/nut
+rm -f ./0_orig/omega
+rm -f ./0_orig/p
+rm -f ./0_orig/pointDisplacement
+rm -f ./0_orig/zoneID
+rm -f ./0_orig/include/initialConditions
+
+rm -f ./constant/dynamicMeshDict
+rm -f ./constant/transportProperties
+rm -f ./constant/motion_*
+rm -f ./constant/blade_init_pos.dat
+rm -f ./constant/globalProcIds
+
+rm -f ./system/controlDict*
+rm -f ./system/createPatchDict
+rm -f ./system/forces
+rm -f ./system/sampledSet
+rm -f ./system/setFieldsDict
+rm -f ./system/surfaces
+rm -f ./system/topoSetDict
+rm -f ./system/decomposeParDict
+
+rm -f ../bladeMesh/log*
+rm -fr ../blade?Mesh
+#------------------------------------------------------------------------------

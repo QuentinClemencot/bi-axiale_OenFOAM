@@ -1,0 +1,16 @@
+#!/bin/sh
+
+py_path="/fsnet/project/nrj/2019/19TRIBINE/simulation/reference_cases/bi_axial_turbine/py/"
+
+# create the images directory (delete if already exist)
+rm -rf ./images ; mkdir ./images
+
+# create the empty foam file
+result=${PWD##*/} # current directory name
+touch $result.foam # create .foam file
+
+
+#generate the ./constant/motion.dat files with information readen in ./simulationProperties.py
+pvbatch ${py_path}/post/generate_field_view_last_period.py  doVorticity=True  doPressure=True doUx=True
+                                     
+

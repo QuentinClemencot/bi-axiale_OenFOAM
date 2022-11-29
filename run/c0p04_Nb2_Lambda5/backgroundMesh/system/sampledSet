@@ -1,0 +1,112 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2112                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+
+
+
+sampledSet
+{
+    type        sets;
+
+    libs ( "libsampling.so" );
+
+
+    writeControl   timeStep;
+    writeInterval   10;
+
+    interpolationScheme   cellPoint;
+
+	setFormat   raw;
+
+    fields (U p);
+
+    sets
+    (
+        x_minus5r
+             type    uniform;
+             axis    xyz;
+             start   ( -0.5 -0.5 0.0);
+             end     ( -0.5 0.1 0.0);
+             nPoints 60;'
+         }
+
+        x_minus2r
+        {
+             type    uniform;
+             axis    xyz;
+             start   ( -0.2 -0.5 0.0);
+             end     ( -0.2 0.1 0.0);
+             nPoints 60;
+         }
+
+        x_minus1p2r
+        {
+             type    uniform;
+             axis    xyz;
+             start   ( -0.12 -0.5 0.0);
+             end     ( -0.12 0.1 0.0);
+             nPoints 60;
+         }
+
+        x_minus0p8r
+        {
+             type    uniform;
+             axis    xyz;
+             start   ( -0.08 -0.4 00.0);
+             end     ( -0.08 0 0.0);
+             nPoints 40;
+        }
+
+        x_0
+        {
+             type    uniform;
+             axis    xyz;
+             start   ( 0 -0.4 0.0);
+             end     ( 0 0 0.0);
+             nPoints 40;
+        }
+
+        x_0p8r
+        {
+             type    uniform;
+             axis    xyz;
+             start   ( 0.08 -0.4 0.0);
+             end     ( 0.08 0 0.0);
+             nPoints 40;
+        }
+
+        x_1p2r
+        {
+             type    uniform;
+             axis    xyz;
+             start   ( 0.12 -0.5 0.0);
+             end     ( 0.12 0.1 0.0);
+             nPoints 60;
+         }
+
+         x_2r
+        {
+             type    uniform;
+             axis    xyz;
+             start   ( 0.2 -0.5 0.0);
+             end     ( 0.2 0.1 0.0);
+             nPoints 60;
+        }
+
+        x_5r
+        {
+             type    uniform;
+             axis    xyz;
+             start   ( 0.5 -0.5 0.0);
+             end     ( 0.5 0.1 0.0);
+             nPoints 60;
+         }
+    );
+}
+
+
+// ************************************************************************* //

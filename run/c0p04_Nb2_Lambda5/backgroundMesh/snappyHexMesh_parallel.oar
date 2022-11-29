@@ -1,0 +1,15 @@
+#!/bin/bash 
+
+
+#OAR -n  snappyHexMesh
+#OAR -l /nodes=1/core=10,walltime=2:00:00
+
+ . /etc/profile 
+source /opt/openfoam/2112plus/OpenFOAM-v2112/etc/bashrc
+ # Shell avec variable d'environnement transmis 
+
+export OMPI_MCA_plm_rsh_agent=oar-envsh 
+
+# Lancement 
+mpirun -np 10 snappyHexMesh -parallel > log
+

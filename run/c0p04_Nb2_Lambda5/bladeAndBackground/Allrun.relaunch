@@ -1,0 +1,50 @@
+#!/bin/sh
+cd ${0%/*} || exit 1                        # Run from this directory
+
+# prepare the simulation to be launch again:
+rm -f  ./OAR.*
+rm -f  ./tmp_*
+rm -f  ./oar-loop-barrier.log
+
+template_path="/fsnet/project/nrj/2019/19TRIBINE/simulation/reference_cases/bi_axial_turbine/templates"
+py_path="/fsnet/project/nrj/2019/19TRIBINE/simulation/reference_cases/bi_axial_turbine/py"
+
+#generate the ./constant/motion.dat files with information readen in ./simulationProperties.py
+${py_path}/pre/trajectoire.py
+
+#generate the ./system/controlDict files with information readen in ./simulationProperties.py
+${template_path}/template_controlDict.py
+
+
+NBCORES=$(grep numberOfSubdomains system/decomposeParDict |\
+		 awk '{print $2}' | cut -f 1 -d ";")
+		 
+RADIUS=$(grep "#radius of rotation" simulationProperties.py | awk '{print $1}')
+NBBLADES=$(grep "#number of blade" simulationProperties.py | awk '{print $1}')
+CHORD=$(grep "#chord lenght" simulationProperties.py | awk '{print $1}')
+LAMBDA=$(grep "#dimensionless foil velocity" simulationProperties.py | awk '{print $1}')
+TRANSLATION=$(grep "#vertical translation distance of the foil" simulationProperties.py | awk '{print $1}')
+		 
+DATE=$(date +%Y%m%d_%H%M%S)
+
+
+
+# create tmp_*.oar :
+TMP_NAME=tmp_${DATE}_$$.oar
+
+echo We are going to use the temporary file $TMP_NAME.
+
+sed "s/__NBCORES__/${NBCORES}/g" template.oar > $TMP_NAME
+sed -i "s/__RADIUS__/${RADIUS}/g" $TMP_NAME
+sed -i "s/__NBBLADES__/${NBBLADES}/g" $TMP_NAME
+sed -i "s/__CHORD__/${CHORD}/g" $TMP_NAME
+sed -i "s/__LAMBDA__/${LAMBDA}/g" $TMP_NAME
+sed -i "s/__TRANSLATION__/${TRANSLATION}/g" $TMP_NAME
+
+chmod u+x $TMP_NAME
+
+
+# submit job
+oarsub -S  ./$TMP_NAME
+
+

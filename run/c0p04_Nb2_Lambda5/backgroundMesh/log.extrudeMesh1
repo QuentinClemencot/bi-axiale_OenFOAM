@@ -1,0 +1,49 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2112                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _14aeaf8dab-20211220 OPENFOAM=2112 version=v2112
+Arch   : "LSB;label=32;scalar=64"
+Exec   : extrudeMesh
+Date   : Aug 02 2022
+Time   : 15:45:16
+Host   : cl7n013
+PID    : 523693
+I/O    : uncollated
+Case   : /fsnet/project/nrj/2019/19TRIBINE/simulation/reference_cases/bi_axial_turbine/run/c0p04_Nb2_Lambda5/backgroundMesh
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Create mesh for time = 1
+
+Selecting extrudeModel linearNormal
+Selected extrudeModel for linearNormal using coeffs 
+{
+    thickness       0.01;
+}
+
+Extruding from patch using model linearNormal
+Flipping normals before extruding
+Not collapsing any edges after extrusion
+
+Extruding patches 1(front) on mesh "/fsnet/project/nrj/2019/19TRIBINE/simulation/reference_cases/bi_axial_turbine/run/c0p04_Nb2_Lambda5/backgroundMesh"
+
+Create mesh for time = 1
+
+Adding overall 0 processor patches.
+Mesh bounding box : (-9 -18 -0.005) (24 18 0.005)
+        with span : (33 36 0.01)
+Merge distance    : 0
+
+Writing mesh to "/fsnet/project/nrj/2019/19TRIBINE/simulation/reference_cases/bi_axial_turbine/run/c0p04_Nb2_Lambda5/backgroundMesh/constant/region0"
+
+End
+

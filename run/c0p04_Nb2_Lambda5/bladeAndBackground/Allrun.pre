@@ -1,0 +1,102 @@
+#!/bin/sh
+cd ${0%/*} || exit 1                        # Run from this directory
+. $WM_PROJECT_DIR/bin/tools/RunFunctions    # Tutorial run functions
+
+
+template_path="/fsnet/project/nrj/2019/19TRIBINE/simulation/reference_cases/bi_axial_turbine/templates"
+py_path="/fsnet/project/nrj/2019/19TRIBINE/simulation/reference_cases/bi_axial_turbine/py"
+
+#generate the ./constant/motion.dat files with information readen in ./simulationProperties.py
+${py_path}/pre/trajectoire.py
+
+#generate the ./0.orig/include/initialConditions files with information readen in ./simulationProperties.py
+${template_path}/template_initialeCondition_transportProperties.py
+
+#generate the ./0.orig/U with information readen in ./simulationProperties.py
+${template_path}/template_U.py
+
+#generate the ./0.orig/p with information readen in ./simulationProperties.py
+${template_path}/template_p.py
+
+#generate the ./0.orig/k with information readen in ./simulationProperties.py
+${template_path}/template_k.py
+
+#generate the ./0.orig/k with information readen in ./simulationProperties.py
+${template_path}/template_omega.py
+
+#generate the ./0.orig/nut with information readen in ./simulationProperties.py
+${template_path}/template_nut.py
+
+#generate the ./0.orig/pointDisplacement with information readen in ./simulationProperties.py
+${template_path}/template_pointDisplacement.py
+
+#generate the ./0.orig/zoneID with information readen in ./simulationProperties.py
+${template_path}/template_zoneID.py
+
+#generate the ./system/forceCoeffs files with information readen in ./simulationProperties.py
+${template_path}/template_forces.py
+
+#generate the ./system/forceCoeffs files with information readen in ./simulationProperties.py
+${template_path}/template_surfaces.py
+
+#generate the ./system/controlDict files with information readen in ./simulationProperties.py
+${template_path}/template_controlDict.py
+
+#generate the ./system/topoSetDict files with information readen in ./simulationProperties.py
+${template_path}/template_topoSet.py
+
+#generate the ./system/setFieldsDict files with information readen in ./simulationProperties.py
+${template_path}/template_setFields.py
+
+#generate the ./system/createPatchDict files with information readen in ./simulationProperties.py
+${template_path}/template_createPatch.py
+
+#generate the ./system/sampledSet files with information readen in ./simulationProperties.py
+${template_path}/template_sampledSet.py
+
+
+
+#copy background mesh
+cp -rf  ../backgroundMesh/constant/polyMesh/ ./constant/
+
+#generate the blades mesh directories
+${template_path}/template_Allrun_bladeMesh.py
+${template_path}/template_createPatchblades.py
+(cd ../bladeMesh && chmod u+x ./Allrun.pre)
+(cd ../bladeMesh && ./Allrun.pre)
+
+# Merge blades overset meshes and background mesh
+(cd ../bladeMesh && chmod u+x ./Allrun.merge)
+(cd ../bladeMesh && ./Allrun.merge)
+
+
+
+cp -rf  ../bladeMesh/constant/polyMesh/ ./constant/
+
+# Reorder mesh cell numerotation to improve linear solver efficiency
+runApplication renumberMesh -overwrite
+
+
+# Create set of cell c0=background C1=blade
+runApplication topoSet
+
+#Create zone of cell c0=background C1=blade from set of cells
+runApplication setsToZones
+
+rm -rf 0
+cp -r 0_orig 0
+
+# Use cellSets to write zoneID
+runApplication setFields
+
+#fusion and rename as 'frontAndBack' the background and overset 'frontAndBack' patches. 
+runApplication createPatch -overwrite 
+
+
+# Distributed cell on the different processors
+# create ./constant/procIds and ./system/decomposePar files
+${template_path}/template_globalProcIds.py
+# decompose the domain
+runApplication decomposePar -cellDist
+
+#------------------------------------------------------------------------------

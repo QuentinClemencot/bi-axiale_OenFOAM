@@ -1,0 +1,53 @@
+#!/bin/sh
+cd ${0%/*} || exit 1                        # Run from this directory
+
+# initialize the simulation:
+./Allrun.pre
+
+NBCORES=$(grep numberOfSubdomains system/decomposeParDict |\
+		 awk '{print $2}' | cut -f 1 -d ";")
+		 
+RADIUS=$(grep "#radius of rotation" simulationProperties.py | awk '{print $1}')
+NBBLADES=$(grep "#number of blade" simulationProperties.py | awk '{print $1}')
+CHORD=$(grep "#chord lenght" simulationProperties.py | awk '{print $1}')
+LAMBDA=$(grep "#dimensionless foil velocity" simulationProperties.py | awk '{print $1}')
+TRANSLATION=$(grep "#vertical translation distance of the foil" simulationProperties.py | awk '{print $1}')
+		 
+DATE=$(date +%Y%m%d_%H%M%S)
+
+# create tmp_start_*.oar :
+TMP_START_NAME=tmp_start_${DATE}_$$.oar
+
+echo We are going to use the temporary file $TMP_START_NAME.
+
+sed "s/__NBCORES__/${NBCORES}/g" template_start.oar > $TMP_START_NAME
+sed -i "s/__RADIUS__/${RADIUS}/g" $TMP_START_NAME
+sed -i "s/__NBBLADES__/${NBBLADES}/g" $TMP_START_NAME
+sed -i "s/__CHORD__/${CHORD}/g" $TMP_START_NAME
+sed -i "s/__LAMBDA__/${LAMBDA}/g" $TMP_START_NAME
+sed -i "s/__TRANSLATION__/${TRANSLATION}/g" $TMP_START_NAME
+
+chmod u+x $TMP_START_NAME
+
+# create tmp_*.oar :
+TMP_NAME=tmp_${DATE}_$$.oar
+
+echo We are going to use the temporary file $TMP_NAME.
+
+sed "s/__NBCORES__/${NBCORES}/g" template.oar > $TMP_NAME
+sed -i "s/__RADIUS__/${RADIUS}/g" $TMP_NAME
+sed -i "s/__NBBLADES__/${NBBLADES}/g" $TMP_NAME
+sed -i "s/__CHORD__/${CHORD}/g" $TMP_NAME
+sed -i "s/__LAMBDA__/${LAMBDA}/g" $TMP_NAME
+sed -i "s/__TRANSLATION__/${TRANSLATION}/g" $TMP_NAME
+
+chmod u+x $TMP_NAME
+
+# now create a chain of 2 job, first is classic, the second is long job
+# first job
+job_id=$(oarsub -S ./$TMP_START_NAME | grep '^OAR_JOB_ID=' | cut -f 2 -d '=')
+
+# second job
+oarsub -S -a ${job_id}  ./$TMP_NAME
+
+
