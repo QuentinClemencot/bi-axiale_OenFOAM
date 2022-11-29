@@ -3,8 +3,8 @@ message: "If you use this software, please cite it as below."
 authors:
 - family-names: "Clémençot"
   given-names: "Quentin"
-- family-names: "Pierre-Luc"
-  given-names: "Delafin"
+- family-names: "Delafin"
+  given-names: "Pierre-Luc"
 title: "bi-axial turbine OpenFOAM"
 version: 1.0.0
 date-released: 2022-11-29
